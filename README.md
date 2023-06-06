@@ -2,9 +2,6 @@
 
 ## Dependencies
 
-- One Raspberry Pi Pico.
-- A Debian bullseye install.
-
     sudo apt update
     sudo apt install build-essential gcc-arm-none-eabi git cmake python3 tio
 
