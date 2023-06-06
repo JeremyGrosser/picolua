@@ -5,7 +5,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 #include <stdio.h>
-#include <stdbool.h>
 
 #include "hardware/watchdog.h"
 #include "pico/stdlib.h"
