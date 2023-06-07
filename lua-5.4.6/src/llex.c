@@ -227,6 +227,7 @@ static int check_next2 (LexState *ls, const char *set) {
 static int read_numeral (LexState *ls, SemInfo *seminfo) {
   TValue obj;
   const char *expo = "Ee";
+  char previous = '\0';
   int first = ls->current;
   lua_assert(lisdigit(ls->current));
   save_and_next(ls);
@@ -234,16 +235,19 @@ static int read_numeral (LexState *ls, SemInfo *seminfo) {
     expo = "Pp";
   for (;;) {
     if (check_next2(ls, expo)) { /* exponent mark? */
+      previous = ls->current;
       check_next2(ls, "-+");  /* optional exponent sign */
     } else if (lisxdigit(ls->current) || ls->current == '.') { /* '%x|%.' */
+      previous = ls->current;
       save_and_next(ls);
     } else if (ls->current == '_') { /* ignore '_' in number */
+      previous = ls->current;
       next(ls);
     } else {
       break;
     }
   }
-  if (lislalpha(ls->current))  /* is numeral touching a letter? */
+  if (lislalpha(ls->current) || previous == '_')  /* is numeral touching a letter? */
     save_and_next(ls);  /* force an error */
   save(ls, '\0');
   if (luaO_str2num(luaZ_buffer(ls->buff), &obj) == 0)  /* format error? */
