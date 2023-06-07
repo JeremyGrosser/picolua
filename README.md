@@ -51,6 +51,12 @@ Blinking is an exercise left to the reader.
 
 The `bootsel()` function will reset the chip for reflashing as if you'd held down the BOOTSEL button.
 
+## Notes
+
+The lua-5.4.6 distribution is copied from the release source tarball with the following modifications:
+- Added src/CMakeLists.txt, which lists all of the .c files except lua.c and luac.c
+- Changed `LUA_32BITS` to `1` in luaconf.h
+
 ## References
 
 - [Getting Started with Raspberry Pi Pico](https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf)
