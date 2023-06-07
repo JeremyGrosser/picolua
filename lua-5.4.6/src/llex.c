@@ -233,11 +233,15 @@ static int read_numeral (LexState *ls, SemInfo *seminfo) {
   if (first == '0' && check_next2(ls, "xX"))  /* hexadecimal? */
     expo = "Pp";
   for (;;) {
-    if (check_next2(ls, expo))  /* exponent mark? */
+    if (check_next2(ls, expo)) { /* exponent mark? */
       check_next2(ls, "-+");  /* optional exponent sign */
-    else if (lisxdigit(ls->current) || ls->current == '.')  /* '%x|%.' */
+    } else if (lisxdigit(ls->current) || ls->current == '.') { /* '%x|%.' */
       save_and_next(ls);
-    else break;
+    } else if (ls->current == '_') { /* ignore '_' in number */
+      next(ls);
+    } else {
+      break;
+    }
   }
   if (lislalpha(ls->current))  /* is numeral touching a letter? */
     save_and_next(ls);  /* force an error */
