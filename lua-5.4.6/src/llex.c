@@ -240,7 +240,7 @@ static int read_numeral (LexState *ls, SemInfo *seminfo) {
     } else if (lisxdigit(ls->current) || ls->current == '.') { /* '%x|%.' */
       previous = ls->current;
       save_and_next(ls);
-    } else if (ls->current == '_') { /* ignore '_' in number */
+    } else if (ls->current == '_' && previous != '_') { /* ignore '_' in number */
       previous = ls->current;
       next(ls);
     } else {
