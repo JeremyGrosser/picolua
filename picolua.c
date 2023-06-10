@@ -14,6 +14,8 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
+#include "autorun.h"
+
 #define PROMPT "lua> "
 
 // reset()
@@ -56,6 +58,27 @@ static int l_get_pin(lua_State *L) {
     return 1;
 }
 
+// int peek(addr)
+static int l_peek(lua_State *L) {
+    uint32_t addr = (uint32_t)lua_tointeger(L, 1);
+    uint32_t offset = addr % 4;
+    addr = addr - offset;
+    uint32_t *ptr = (uint32_t *)addr;
+    uint32_t val = *ptr;
+    val = (val >> (offset * 8)) & 0xFF;
+    lua_pop(L, 1);
+    lua_pushinteger(L, val);
+    return 1;
+}
+
+// poke(addr, value) --  must be 32-bit aligned, (addr % 4) == 0
+static int l_poke(lua_State *L) {
+    uint32_t *ptr = (uint32_t *)lua_tointeger(L, 1);
+    *ptr = (uint32_t)lua_tointeger(L, 2);
+    lua_pop(L, 2);
+    return 0;
+}
+
 int main() {
     lua_State *L;
     luaL_Buffer buf;
@@ -74,6 +97,14 @@ int main() {
     lua_register(L, "set_output", l_set_output);
     lua_register(L, "set_pin", l_set_pin);
     lua_register(L, "get_pin", l_get_pin);
+    lua_register(L, "peek", l_peek);
+    lua_register(L, "poke", l_poke);
+
+    status = luaL_dostring(L, autorun_lua);
+    if(status != LUA_OK) {
+        const char *msg = lua_tostring(L, -1);
+        lua_writestringerror("autorun error: %s\n", msg);
+    }
 
     printf("\n*** picolua\n Ctrl-C  Clear buffer\n Ctrl-D  Execute buffer\n Ctrl-L  Clear screen\n\n" PROMPT);
 
