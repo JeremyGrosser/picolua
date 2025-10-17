@@ -14,8 +14,6 @@
 #include "modules.h"
 #include "../drivers/keyboard.h"
 
-static uint32_t current_clk = 125000;
-
 uint32_t get_total_memory() {
 	extern char __StackLimit, __bss_end__;
 	return &__StackLimit  - &__bss_end__;
@@ -27,12 +25,11 @@ uint32_t get_free_memory() {
 }
 
 uint32_t get_system_clk() {
-	return current_clk;
+	return frequency_count_khz(clk_sys);
 }
 
 bool set_system_clk(uint32_t clk) {
 	if (set_sys_clock_khz(clk, true)) {
-		current_clk = clk;
 		return true;
 	}
 	return false;
@@ -156,7 +153,7 @@ static int l_get_battery(lua_State* L) {
 }
 
 static int l_get_clock(lua_State* L) {
-	lua_pushinteger(L, current_clk);
+	lua_pushinteger(L, get_system_clk());
 	return 1;
 }
 
