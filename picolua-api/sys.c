@@ -25,7 +25,7 @@ uint32_t get_free_memory() {
 }
 
 uint32_t get_system_clk() {
-	return frequency_count_khz(clk_sys);
+	return frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_SYS);
 }
 
 bool set_system_clk(uint32_t clk) {
